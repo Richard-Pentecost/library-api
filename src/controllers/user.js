@@ -14,12 +14,25 @@ exports.create = (req, res) => {
     })
     .catch(error => {
       if (error.name === 'ValidationError') {
-        const emailError = error.errors.email ? error.errors.email.message : null;
-        res.status(400).json({
-          errors: {
-            email: emailError,
-          },
-        });
+        if (error.errors.email) {
+          res.status(400).json({
+            errors: {
+              email: error.errors.email.message,
+            },
+          });
+        } else {
+          res.status(400).json({
+            errors: {
+              password: error.errors.password.message,
+            },
+          });
+        }
+        // const emailError = error.errors.email ? error.errors.email.message : null;
+        // res.status(400).json({
+        //   errors: {
+        //     email: emailError,
+        //   },
+        // });
       } else {
         res.sendStatus(500);
       }
