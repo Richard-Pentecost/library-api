@@ -27,12 +27,6 @@ exports.create = (req, res) => {
             },
           });
         }
-        // const emailError = error.errors.email ? error.errors.email.message : null;
-        // res.status(400).json({
-        //   errors: {
-        //     email: emailError,
-        //   },
-        // });
       } else {
         res.sendStatus(500);
       }
