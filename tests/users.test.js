@@ -21,7 +21,6 @@ describe('/users', () => {
         .end((error, res) => {
           expect(error).to.equal(null);
           expect(res.status).to.equal(200);
-
           User.findById(res.body._id, (err, user) => {
             expect(err).to.equal(null);
             expect(user.firstName).to.equal('Richard');
@@ -31,11 +30,27 @@ describe('/users', () => {
             expect(user.password).to.have.length(60);
             expect(res.body).to.not.have.property('password');
           });
+          done();
+        });
+    });
 
+    it('validates a users email address', (done) => {
+      chai.request(server)
+        .post('/users')
+        .send({
+          firstName: 'Richard',
+          lastName: 'Pentecost',
+          email: 'richard.com',
+          password: '1234',
+        })
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          expect(res.body.errors.email).to.equal('Invalid email address');
+          User.countDocuments((err, count) => {
+            expect(count).to.equal(0);
+          });
           done();
         });
     });
   });
-
-
 });
