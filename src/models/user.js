@@ -12,9 +12,6 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     validate: [p => p.length > 7, 'Password must be at least 8 characters long'],
-    //  validator: p => p.length > 7,
-    //  message: 'Password must be at least 8 characters long',
-    // },
   },
 });
 
@@ -37,6 +34,10 @@ userSchema.methods.sanitise = function sanitise(user) {
   const { password, ...noPassword } = user.toObject();
   return noPassword;
 };
+
+userSchema.methods.validatePassword = function validatePassword(password) {
+  return bcrypt.compareSync(password, this.password);
+}
 
 const User = mongoose.model('User', userSchema);
 
