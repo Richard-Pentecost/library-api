@@ -1,4 +1,4 @@
-const { signUp, login } = require('./helpers/user-helpers');
+const { signUp, login, createBook } = require('./helpers/user-helpers');
 const DataFactory = require('./helpers/data-factory');
 const Book = require('../src/models/book');
 
@@ -8,28 +8,26 @@ describe('/books', () => {
       const userData = DataFactory.user();
       signUp(userData).then((user) => {
         login(userData.email, userData.password).then((credentials) => {
-          chai.request(server)
-            .post('/books')
-            .set('Authorization', credentials.body.token)
-            .send({
-              title: 'Bravo Two Zero',
-              author: 'Andy McNab',
-              genre: 'non-fiction',
-              isbn: '01234',
-            })
-            .end((err, res) => {
-              expect(err).to.equal(null);
+          const book = {
+            title: 'Bravo Two Zero',
+            author: 'Andy McNab',
+            genre: 'non-fiction',
+            isbn: '01234',
+          };
+          createBook(book, credentials)
+            .then((res) => {
               expect(res.status).to.equal(201);
-              Book.findById(res.body._id, (error, book) => {
+              Book.findById(res.body._id, (error, newBook) => {
                 expect(error).to.equal(null);
-                expect(book.title).to.equal('Bravo Two Zero');
-                expect(book.author).to.equal('Andy McNab');
-                expect(book.genre).to.equal('non-fiction');
-                expect(book.isbn).to.equal('01234');
-                expect(JSON.stringify(book.user)).to.equal(JSON.stringify(user.body._id));
-                done();
+                expect(newBook.title).to.equal('Bravo Two Zero');
+                expect(newBook.author).to.equal('Andy McNab');
+                expect(newBook.genre).to.equal('non-fiction');
+                expect(newBook.isbn).to.equal('01234');
+                expect(JSON.stringify(newBook.user)).to.equal(JSON.stringify(user.body._id));
               });
-            });
+              done();
+            })
+            .catch((error) => done(error));
         });
       });
     });
@@ -38,21 +36,19 @@ describe('/books', () => {
       const userData = DataFactory.user();
       signUp(userData).then((user) => {
         login(userData.email, userData.password).then((credentials) => {
-          chai.request(server)
-            .post('/books')
-            .set('Authorization', credentials.body.token)
-            .send({
-              author: 'Andy McNab',
-              genre: 'non-fiction',
-              isbn: '01234',
-            })
-            .end((err, res) => {
-              expect(err).to.equal(null);
+          const book = {
+            author: 'Andy McNab',
+            genre: 'non-fiction',
+            isbn: '01234',
+          };
+          createBook(book, credentials)
+            .then((res) => {
               expect(res.status).to.equal(400);
               expect(res.body.errors.title).to.equal('The title must be provided');
               done();
-            });
-        })
+            })
+            .catch((error) => done(error));
+        });
       });
     });
 
