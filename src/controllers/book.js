@@ -44,11 +44,25 @@ exports.create = (req, res) => {
 };
 
 exports.listBooks = (req, res) => {
-  Book.find({}, (err, books) => {
-    if (!books) {
-      res.status(400).json({ error: 'There is a problem retrieving books' });
-    } else {
+  const query = Book.find();
+
+  if (req.query.genre) {
+    query.where('genre').equals(req.query.genre);
+  }
+
+  query.exec()
+    .then(books => {
       res.status(200).json(books);
-    }
-  });
+    })
+    .catch((error) => {
+      res.sendStatus(500);
+    });
+
+  // Book.find({}, (err, books) => {
+  //   if (!books) {
+  //     res.status(400).json({ error: 'There is a problem retrieving books' });
+  //   } else {
+  //     res.status(200).json(books);
+  //   }
+  // });
 };

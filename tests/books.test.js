@@ -118,5 +118,30 @@ describe('/books', () => {
             });
         });
     });
+
+    it('filters books be genre', (done) => {
+      const books = [
+        DataFactory.book({ genre: 'Not comedy' }),
+        DataFactory.book({ genre: 'Comedy' }),
+        DataFactory.book({ genre: 'Not comedy' }),
+        DataFactory.book({ gener: 'Comedy' }),
+      ];
+
+      const comedies = books.filter(book => book.genre === 'Comedy');
+
+      createMany(books, token).then(() => {
+        chai.request(server)
+          .get('/books')
+          .query({ genre: 'Comedy' })
+          .end((error, res) => {
+            expect(res.status).to.equal(200);
+            expect(res.body).to.have.length(comedies.length);
+            res.body.forEach((item) => {
+              expect(item.genre).to.equal('Comedy');
+            });
+            done()
+          });
+      }); 
+    });
   });
 });
