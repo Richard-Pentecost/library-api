@@ -1,4 +1,3 @@
-
 exports.signUp = user => new Promise((resolve, reject) => {
   chai.request(server)
     .post('/users')
@@ -27,22 +26,3 @@ exports.login = (email, password) => new Promise((resolve, reject) => {
       }
     });
 });
-
-exports.createBook = (book, credentials) => new Promise((resolve, reject) => {
-  chai.request(server)
-    .post('/books')
-    .set('Authorization', credentials.body.token)
-    .send({
-      title: book.title,
-      author: book.author,
-      genre: book.genre,
-      isbn: book.isbn,
-    })
-    .end((error, response) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(response);
-      }
-    })
-})

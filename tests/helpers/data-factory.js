@@ -6,3 +6,10 @@ exports.user = (options = {}) => ({
   email: options.email || faker.internet.email(),
   password: options.password || faker.internet.password(),
 });
+
+exports.book = (opts = {}) => ({
+  title: opts.title || faker.random.word(),
+  author: opts.author || faker.name.findName(),
+  isbn: opts.isbn || faker.random.number().toString(),
+  genre: opts.genre || faker.random.word(),
+});

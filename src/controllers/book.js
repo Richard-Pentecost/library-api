@@ -1,5 +1,4 @@
 const Book = require('../models/book');
-// const User = require('../models/user');
 
 exports.create = (req, res) => {
   const book = new Book({
@@ -9,7 +8,6 @@ exports.create = (req, res) => {
     isbn: req.body.isbn,
     user: req.authorizer.id, // we can get the user id from the authorizer - the person who sent the request, rather than taking it from the request body
   });
-
 
   book.save()
     .then((data) => {
@@ -43,4 +41,14 @@ exports.create = (req, res) => {
   //     });
   //   }
   // });
+};
+
+exports.listBooks = (req, res) => {
+  Book.find({}, (err, books) => {
+    if (!books) {
+      res.status(400).json({ error: 'There is a problem retrieving books' });
+    } else {
+      res.status(200).json(books);
+    }
+  });
 };
